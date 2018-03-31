@@ -1,0 +1,74 @@
+-- V1.0a AR
+-- 31.12.2016 12:12:48 AR V1.0b
+-- 04.04.2017 07:35:26 AR V1.0c
+
+block.setSize(31, 31)
+
+generic = {
+  parameter = {
+    initalOutputs = "",
+  },
+
+  init = function(self)
+    block.setInputsPinCount(1)
+    block.setInputPinTypeRestrains(1, 'boolean', 'number')
+    block.setOutputsPinCount(0)
+    block.modifyFlags('IsEnabledSubSystem', true)
+    block.modifyFlags('SupressStopFunctionCall', true)
+  end,
+
+  open = function(self)
+    gui.add('Info', 'Info', 'Enabled Subsystem', [[
+Makes the parent subsystem to an enabled subsystem.
+
+Define for all outputs of the subsystem the inital values as comma
+seperated values (vectors are allowed: 1,2,{3,4},6)
+If an output is not defined, nil will be the output value.
+
+Note:
+You MUST connect this block input pin directly to a subsystem input pin!
+    ]])
+    gui.add('Edit', 'EditInitalOutputs', 'Inital outputs', {Width = 240})
+    gui.set('EditInitalOutputs', 'Text', self.parameter.initalOutputs)
+    gui.setSize()
+  end,
+
+  apply = function(self)
+    self.parameter.initalOutputs = gui.get('EditInitalOutputs', 'Text')
+  end,
+
+  close = function()
+  end,
+
+  avatar = function(self)
+    return block.getDefaultAvatar(0x50,
+      '',
+      'draw.line(px(20), py(60), px(40), py(60), px(40), py(40), px(60), py(40), px(60), py(60),px(80), py(60))')
+  end,
+
+  generate = function(self)
+    local source =
+      [==[
+        local block = {}
+
+        block.start = function()
+          return INITALOUTPUTS
+        end
+
+        block.step = function(a)
+          if type(a) == 'boolean' then
+            return a
+          end
+          return a > 0.0
+        end
+
+        return block
+      ]==]
+    local replaces = {
+      ['INITALOUTPUTS'] = self.parameter.initalOutputs
+    }
+    return string.gsub(source, '%a+', replaces)
+  end,
+
+}
+

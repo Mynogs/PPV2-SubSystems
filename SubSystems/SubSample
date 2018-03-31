@@ -1,0 +1,79 @@
+-- V1.0a AR
+-- 31.12.2016 12:13:41 AR V1.0b
+-- 04.04.2017 07:41:39 AR V1.0c
+
+block.setSize(31, 31)
+
+generic = {
+  parameter = {
+    initalOutputs = "",
+    divider = 2,
+    offset = 0,
+  },
+
+  init = function(self)
+    block.setInputsPinCount(0)
+    block.setOutputsPinCount(0)
+    block.modifyFlags('IsEnabledSubSystem', true)
+    block.modifyFlags('SupressStopFunctionCall', true)
+  end,
+
+  open = function(self)
+    gui.add('Info', 'Info', 'Subsample', [[
+Makes the parent subsystem to a subsample subsystem.
+
+Execute the subsystem every diverder cycles
+Define for all output of the subsystem the inital values as komma
+seperated values (vectors are allowed): 1,2,{3,4},6
+If an output is not defined, nil will be the output value.
+    ]])
+    gui.add('Edit', 'EditInitalOutputs', 'Inital outputs', {Width = 240})
+    gui.add('Edit', 'EditDivider', 'Divider')
+    gui.add('Edit', 'EditOffset', 'Offset')
+    gui.set('EditInitalOutputs', 'Text', self.parameter.initalOutputs)
+    gui.set('EditDivider', 'Text', self.parameter.divider)
+    gui.set('EditOffset', 'Text', self.parameter.offset)
+    gui.setSize()
+  end,
+
+  apply = function(self)
+    self.parameter.initalOutputs = gui.get('EditInitalOutputs', 'Text')
+    self.parameter.divider = tonumber(gui.get('EditDivider', 'Text'))
+    self.parameter.offset = tonumber(gui.get('EditOffset', 'Text'))
+  end,
+
+  close = function()
+  end,
+
+  avatar = function(self)
+    return block.getDefaultAvatar(0x50, "'\\xE2\\x88\\xBB'")
+  end,
+
+  generate = function(self)
+    local source =
+      [==[
+        local block = {}
+
+        block.start = function()
+          block.count = -1
+          return table.unpack({INITALOUTPUTS})
+        end
+
+        block.step = function(a)
+          block.count = block.count + 1
+          return (block.count % DIVIDER) == OFFSET
+        end
+
+        return block
+      ]==]
+    local replaces = {
+      ['INITALOUTPUTS'] = self.parameter.initalOutputs,
+      ['DIVIDER'] = self.parameter.divider,
+      ['OFFSET'] = self.parameter.offset,
+
+    }
+    return string.gsub(source, '%a+', replaces)
+  end,
+
+}
+
