@@ -1,0 +1,59 @@
+-- 29.04.2018 11:16:34 AR V1.0a
+
+block.setSize(31, 31)
+
+generic = {
+  parameter = {
+  },
+
+  init = function(self)
+    block.setInputsPinCount(0)
+    block.setOutputsPinCount(2)
+    block.setOutputPinTypeRestrains(1, 'boolean')
+    block.setOutputPinTypeRestrains(2, 'nil', 'string')
+    block.modifyFlags('Protected', true)
+    block.modifyFlags('SupressStartFunctionCall', true)
+    block.modifyFlags('SupressStopFunctionCall', true)
+  end,
+
+  open = function(self)
+    gui.add('HTMLInfo', 'Info', 'Proteced Subsystem', [[
+Makes a subsystem fault tolerant<br><br>
+All outputs calculate before the failt occures are set correctly.<br>
+With the fault calculation stops and outputs hold the value from the last succesfull simlation step.<br><br>
+If the first step fails, all uncalculated outputs are set to <i>nil</i>.<br>
+Set the output datatype restrains carfully: If <i>nil</i> is disabled the simulation stops!<br><br>
+You can route the both output singals (<i>ok</i> and <i>message</i>) directly to output pins.<br>
+Is the simualtion step succesfull <i>ok</i> is <i>true</i> and <i>message</i> is <i>nil</i>.<br>
+On fail <i>ok</i> is <i>false</i> and <i>message</i> is the error message.<br>
+    ]], {Height = 200})
+    gui.setSize(500)
+  end,
+
+  apply = function(self)
+  end,
+
+  close = function()
+  end,
+
+  avatar = function(self)
+    return block.getDefaultAvatar(0x50, '"P"')
+  end,
+
+  generate = function(self)
+    local source =
+      [==[
+        local block = {}
+
+        block.step = function(a)
+          return true
+        end
+
+        return block
+      ]==]
+    return source
+  end,
+
+}
+
+

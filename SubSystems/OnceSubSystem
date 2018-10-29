@@ -1,0 +1,67 @@
+-- 15.10.2018 09:27:52 AR V1.0a
+
+block.setSize(31, 31)
+
+generic = {
+  parameter = {
+    initalOutputs = "",
+  },
+
+  init = function(self)
+    block.setInputsPinCount(0)
+    block.setOutputsPinCount(0)
+    block.modifyFlags('IsEnabledSubSystem', true)
+    block.modifyFlags('SupressStopFunctionCall', true)
+  end,
+
+  open = function(self)
+    gui.add('Info', 'Info', 'Enabled Subsystem', [[
+Execute the subsystem once after simulation start
+
+Define for all outputs of the subsystem the inital values as comma
+seperated values (vectors are allowed: 1,2,{3,4},6)
+If an output is not defined, nil will be the output value.
+    ]])
+    gui.add('Edit', 'EditInitalOutputs', 'Inital outputs', {Width = 240})
+    gui.set('EditInitalOutputs', 'Text', self.parameter.initalOutputs)
+    gui.setSize()
+  end,
+
+  apply = function(self)
+    self.parameter.initalOutputs = gui.get('EditInitalOutputs', 'Text')
+  end,
+
+  close = function()
+  end,
+
+  avatar = function(self)
+    return block.getDefaultAvatar(0x50,
+      '',
+      'draw.line(px(20), py(40), px(20), py(60), px(80), py(60))')
+  end,
+
+  generate = function(self)
+    local source =
+      [==[
+        local block = {}
+
+        block.start = function()
+          return INITALOUTPUTS
+        end
+
+        block.step = function(a)
+          local q = not block.done
+          block.done = true
+          return q
+        end
+
+        return block
+      ]==]
+    local replaces = {
+      ['INITALOUTPUTS'] = self.parameter.initalOutputs
+    }
+    return string.gsub(source, '%a+', replaces)
+  end,
+
+}
+

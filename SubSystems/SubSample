@@ -1,6 +1,7 @@
 -- V1.0a AR
 -- 31.12.2016 12:13:41 AR V1.0b
 -- 04.04.2017 07:41:39 AR V1.0c
+-- 25.07.2018 06:24:12 AR V1.0d
 
 block.setSize(31, 31)
 
@@ -20,10 +21,10 @@ generic = {
 
   open = function(self)
     gui.add('Info', 'Info', 'Subsample', [[
-Makes the parent subsystem to a subsample subsystem.
+Makes the subsystem to a subsample subsystem.
 
-Execute the subsystem every diverder cycles
-Define for all output of the subsystem the inital values as komma
+Execute the subsystem every divider cycles
+Define for all output of the subsystem the inital values as comma
 seperated values (vectors are allowed): 1,2,{3,4},6
 If an output is not defined, nil will be the output value.
     ]])
@@ -70,7 +71,6 @@ If an output is not defined, nil will be the output value.
       ['INITALOUTPUTS'] = self.parameter.initalOutputs,
       ['DIVIDER'] = self.parameter.divider,
       ['OFFSET'] = self.parameter.offset,
-
     }
     return string.gsub(source, '%a+', replaces)
   end,
