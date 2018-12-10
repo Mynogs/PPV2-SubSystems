@@ -1,5 +1,5 @@
 # PPV2 SubSystems
-This library is part of the [P+ simulation software](https://github.com/Mynogs/PPV2-Simulation-System).
+This library is part of the [p+ simulation software](https://github.com/Mynogs/PPV2-Simulation-System).
 
 Implement subsystem and subsystem control blocks.
 
